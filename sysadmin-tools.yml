@@ -3,8 +3,8 @@
   - hosts: localhost
     connection: local
     vars:
-      - username: pav
-      - home: /home/pav
+      - username: user # change THIS!!
+      - home: /home/username # change THIS!!
     become: true
     tasks:
       - name: Run the equivalent of "apt-get update" as a separate step
@@ -37,7 +37,8 @@
         snap:
           name:
             - fast
-            - code    
+            - code
+            - bpytop    
           classic: yes
       - name: Create yaml.nanorc
         file:
