@@ -1,9 +1,8 @@
 ---
-  - hosts: ubuntu
-    connection: local
+  - hosts: local
     vars:
-      - username: ubuntu # change THIS!!
-      - home: /home/ubuntu # change THIS!!
+      - username: pav # change THIS!!
+      - home: /home/pav # change THIS!!
     become: true
     tasks:
       - name: Run the equivalent of "apt-get update" as a separate step
@@ -45,10 +44,10 @@
           state: touch
       - name: Copy config from template - starship
         template:
-          src: /{{ home }}/git_repos/sysadmin-tools/templates/starship.toml
-          dst: /{{ home }}/.config/starship.toml
-          owner: {{ username }}
-          group: {{ username }}
+          src: "/home/pav/git_repos/sysadmin-tools/templates/starship.toml"
+          dst: "/home/pav/.config/starship.toml"
+          owner: "{{ username }}"
+          group: "{{ username }}"
           mode: 0664
       - name: Create yaml.nanorc
         file:
@@ -56,14 +55,14 @@
           state: touch
       - name: Copy config from template - nano
         template: 
-          src: /{{ home }}/git_repos/sysadmin-tools/templates/yaml.nanorc.j2
-          dest: /usr/share/nano/yaml.nanorc
+          src: "/{{ home }}/git_repos/sysadmin-tools/templates/yaml.nanorc.j2"
+          dest: "/usr/share/nano/yaml.nanorc"
           owner: root
           group: root
           mode: 0644
       - name: git branch name in bash
         blockinfile:
-          dest: /{{ home }}/.bashrc
+          dest: "/{{ home }}/.bashrc"
           block: |
             # Show current git branch in command line
             parse_git_branch() {

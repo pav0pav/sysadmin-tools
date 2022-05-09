@@ -8,7 +8,7 @@ $git_branch\
 $git_status\
 [](fg:#FCA17D bg:#86BBD8)\
 $nodejs\
-$rust\
+$aws\
 [](fg:#86BBD8 bg:#33658A)\
 $time\
 [ ](fg:#33658A)\
@@ -43,6 +43,8 @@ truncation_symbol = "…/"
 # So either put "Important Documents" before "Documents" or use the substituted version:
 # "Important  " = "  "
 
+
+
 [git_branch]
 symbol = ""
 style = "bg:#FCA17D"
@@ -57,10 +59,15 @@ symbol = ""
 style = "bg:#86BBD8"
 format = '[[ $symbol ($version) ](bg:#86BBD8)]($style)'
 
-[rust]
-symbol = ""
-style = "bg:#86BBD8"
-format = '[[ $symbol ($version) ](bg:#86BBD8)]($style)'
+[aws]
+format = '[[ $symbol($profile )(\($region\) )](bg:#86BBD8)]($style)'
+style = "bold blue"
+symbol = "🅰 "
+[aws.region_aliases]
+ap-southeast-2 = "au"
+us-east-1 = "va"
+[aws.profile_aliases]
+drm-dev = 'drm-dev'
 
 [time]
 disabled = false
