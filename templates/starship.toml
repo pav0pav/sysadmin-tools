@@ -7,7 +7,7 @@ $directory\
 $git_branch\
 $git_status\
 [](fg:#FCA17D bg:#86BBD8)\
-$nodejs\
+$python\
 $aws\
 [](fg:#86BBD8 bg:#33658A)\
 $time\
@@ -54,8 +54,8 @@ format = '[[ $symbol $branch ](bg:#FCA17D)]($style)'
 style = "bg:#FCA17D"
 format = '[[($all_status$ahead_behind )](bg:#FCA17D)]($style)'
 
-[nodejs]
-symbol = ""
+[python]
+symbol = "🐍"
 style = "bg:#86BBD8"
 format = '[[ $symbol ($version) ](bg:#86BBD8)]($style)'
 
