@@ -24,10 +24,11 @@
             - iperf3
             - iftop
             - mtr
-            - htop
+            - bpytop
             - tilix
             - micro
             - ncdu
+            - netdiscover
           state: present 
           update_cache: yes
       - name: install snap packages
