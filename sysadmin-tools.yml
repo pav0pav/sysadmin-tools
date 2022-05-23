@@ -24,7 +24,6 @@
             - iperf3
             - iftop
             - mtr
-            - bpytop
             - tilix
             - micro
             - ncdu
