@@ -1,5 +1,6 @@
 ---
-  - hosts: local
+  - hosts: localhost
+    connection: local
     vars:
       - username: pav # change THIS!!
       - home: /home/pav # change THIS!!
@@ -42,13 +43,21 @@
         file:
           path: "/{{ home }}/.config/starship.toml"
           state: touch
-      - name: Copy config from template - starship
-        template:
-          src: "/home/pav/git_repos/sysadmin-tools/templates/starship.toml"
-          dst: "/home/pav/.config/starship.toml"
           owner: "{{ username }}"
           group: "{{ username }}"
           mode: 0664
+      - name: Copy config from template - starship
+        template:
+          src: "/home/pav/git_repos/sysadmin-tools/templates/starship.toml"
+          dest: "/home/pav/.config/starship.toml"
+          owner: "{{ username }}"
+          group: "{{ username }}"
+          mode: 0664
+      - name: Start starship automatically in your terminal
+        lineinfile:
+          path: /home/pav/.bashrc
+          insertafter: EOF
+          line: 'eval "$(starship init bash)"'
       - name: Create yaml.nanorc
         file:
           path: "/usr/share/nano/yaml.nanorc"
