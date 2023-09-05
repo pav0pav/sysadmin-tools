@@ -8,20 +8,23 @@
       - name: Run the equivalent of "apt-get update" as a separate step
         apt:
           update_cache: yes
+
       - name: Upgrade all packages to the latest version
         apt:
           name: "*"
           state: latest
+
       - name: Remove useless packages from the cache
         apt:
           autoclean: yes
+
       - name: Remove dependencies that are no longer required
         apt:
           autoremove: yes
+
       - name: Install favourite tools
         apt: 
           pkg: 
-            - duf
             - iperf3
             - iftop
             - mtr-tiny
@@ -34,15 +37,28 @@
             - net-tools
           state: present 
           update_cache: yes
-      - name: install snap packages
+
+      - name: Install snap packages
         snap:
           name:
             - fast
             - code
             - btop
-            - starship
+#            - starship
             - brave    
           classic: yes
+
+      - name: Download starship installation script
+        get_url:
+          url: https://starship.rs/install.sh
+          dest: "{{ home }}"
+          owner: "{{ username }}"
+          group: "{{ username }}"
+          mode: 0744
+
+      - name: Run starship installation script
+        script: '/Users/pawel/git_repos/sysadmin-tools/templates/install.sh -y'
+
       - name: Create starship config file
         file:
           path: "{{ home }}/.config/starship.toml"
@@ -50,6 +66,7 @@
           owner: "{{ username }}"
           group: "{{ username }}"
           mode: 0664
+
       - name: Copy config from template - starship
         template:
           src: "/Users/pawel/git_repos/sysadmin-tools/templates/starship.toml"
@@ -62,10 +79,12 @@
           path: "/{{ home }}/.bashrc"
           insertafter: EOF
           line: 'eval "$(starship init bash)"'
+
       - name: Create yaml.nanorc
         file:
           path: "/usr/share/nano/yaml.nanorc"
           state: touch
+
       - name: Copy config from template - nano
         template: 
           src: "/Users/pawel/git_repos/sysadmin-tools/templates/yaml.nanorc.j2"
@@ -73,7 +92,8 @@
           owner: root
           group: root
           mode: 0644
-      - name: git branch name in bash
+
+      - name: Git branch name in bash
         blockinfile:
           dest: "/{{ home }}/.bashrc"
           block: |
@@ -82,4 +102,13 @@
             git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
             }
             export PS1="\[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
-          backup: yes 
+          backup: yes
+
+      - name: Download and install InconsolataGo font
+        unarchive:
+          src: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/InconsolataGo.zip
+          dest: "{{ home }}/.local/share/fonts"
+          group: "{{ username }}"
+          owner: "{{ username }}"
+          mode: 0644
+          remote_src: yes
