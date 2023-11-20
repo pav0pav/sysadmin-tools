@@ -44,7 +44,7 @@
             - fast
             - code
             - btop
-#            - starship
+            - starship
             - brave    
           classic: yes
 
