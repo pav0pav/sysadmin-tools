@@ -1,8 +1,8 @@
 ---
-  - hosts: utm
+  - hosts: ubuntu
     vars:
-      - username: your_user # change THIS!!
-      - home: /home/your_user # change THIS!!
+      - username: ubuntu # change THIS!!
+      - home: /home/ubuntu # change THIS!!
     become: true
     tasks:
       - name: Run the equivalent of "apt-get update" as a separate step
@@ -36,19 +36,10 @@
             - neofetch
             - net-tools
             - unzip
+            - curl
+            - flatpak
           state: present
           update_cache: yes
-
-      - name: Install snap packages
-        snap:
-          name:
-            - fast
-            - code
-            - btop
-            - starship
-            - brave
-          classic: yes
-        ignore_errors: true
 
       - name: Download starship installation script
         get_url:
@@ -59,7 +50,7 @@
           mode: 0744
 
       - name: Run starship installation script
-        script: '/Users/pawel/git_repos/sysadmin-tools/templates/install.sh -y'
+        script: '/home/paweld/git_repos/sysadmin-tools/templates/install.sh -y'
 
       - name: Create starship config file
         file:
@@ -71,7 +62,7 @@
 
       - name: Copy config from template - starship
         template:
-          src: "/Users/pawel/git_repos/sysadmin-tools/templates/starship.toml"
+          src: "/home/paweld/git_repos/sysadmin-tools/templates/starship.toml"
           dest: "/{{ home }}/.config/starship.toml"
           owner: "{{ username }}"
           group: "{{ username }}"
@@ -90,7 +81,7 @@
 
       - name: Copy config from template - nano
         template:
-          src: "/Users/pawel/git_repos/sysadmin-tools/templates/yaml.nanorc.j2"
+          src: "/home/paweld/git_repos/sysadmin-tools/templates/yaml.nanorc.j2"
           dest: "/usr/share/nano/yaml.nanorc"
           owner: root
           group: root
@@ -120,3 +111,13 @@
           owner: "{{ username }}"
           mode: 0644
           remote_src: yes
+
+      - name: Install Brave browser
+        flatpak:
+          name: com.brave.Browser
+          state: present
+
+      - name: Install VSCodium
+        flatpak:
+          name: com.vscodium.codium
+          state: present
