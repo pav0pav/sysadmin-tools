@@ -1,9 +1,8 @@
 ---
 - hosts: ubuntu
-  vars:
-    - username: debian # change THIS!!
-    - home: /home/debian # change THIS!!
   become: true
+  vars:
+    username: builder
   tasks:
     - name: Run the equivalent of "apt-get update" as a separate step
       apt:
@@ -43,35 +42,42 @@
         update_cache: yes
 
     - name: Download starship installation script
+      become: false
       get_url:
         url: https://starship.rs/install.sh
-        dest: "{{ home }}"
+        dest: "/home/{{ username }}/install.sh"
         owner: "{{ username }}"
         group: "{{ username }}"
         mode: 0744
 
     - name: Run starship installation script
-      script: "/Users/pawel/git_repos/sysadmin-tools/templates/install.sh -y"
+      become: false
+      shell: "/home/{{ username }}/install.sh -y"
+      args:
+        creates: /usr/local/bin/starship
 
     - name: Create starship config file
+      become: false
       file:
-        path: "{{ home }}/.config/starship.toml"
+        path: "/home/{{ username }}/.config/starship.toml"
         state: touch
         owner: "{{ username }}"
         group: "{{ username }}"
         mode: 0664
 
     - name: Copy config from template - starship
+      become: false
       template:
-        src: "/Users/pawel/git_repos/sysadmin-tools/templates/starship.toml"
-        dest: "/{{ home }}/.config/starship.toml"
+        src: templates/starship.toml
+        dest: "/home/{{ username }}/.config/starship.toml"
         owner: "{{ username }}"
         group: "{{ username }}"
         mode: 0664
 
     - name: Start starship automatically in your terminal
+      become: false
       lineinfile:
-        path: "/{{ home }}/.bashrc"
+        path: "/home/{{ username }}/.bashrc"
         insertafter: EOF
         line: 'eval "$(starship init bash)"'
 
@@ -82,15 +88,16 @@
 
     - name: Copy config from template - nano
       template:
-        src: "/Users/pawel/git_repos/sysadmin-tools/templates/yaml.nanorc.j2"
+        src: templates/yaml.nanorc.j2
         dest: "/usr/share/nano/yaml.nanorc"
         owner: root
         group: root
         mode: 0644
 
     - name: Git branch name in bash
+      become: false
       blockinfile:
-        dest: "/{{ home }}/.bashrc"
+        dest: "/home/{{ username }}/.bashrc"
         block: |
           # Show current git branch in command line
           parse_git_branch() {
@@ -100,14 +107,16 @@
         backup: yes
 
     - name: Make sure fonts directory exists.
+      become: false
       file:
-        path: "{{ home }}/.local/share/fonts"
+        path: "/home/{{ username }}/.local/share/fonts"
         state: directory
 
     - name: Download and install InconsolataGo font
+      become: false
       unarchive:
         src: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/InconsolataGo.zip
-        dest: "{{ home }}/.local/share/fonts"
+        dest: "/home/{{ username }}/.local/share/fonts"
         group: "{{ username }}"
         owner: "{{ username }}"
         mode: 0644
@@ -125,7 +134,8 @@
         name: com.brave.Browser
         state: present
 
-    - name: Install VSCodium
-      flatpak:
-        name: com.vscodium.codium
-        state: present
+    - name: Install Zed editor
+      become: false
+      shell: "curl -f https://zed.dev/install.sh | sh"
+      args:
+        creates: "/home/{{ username }}/.local/bin/zed"
