@@ -51,7 +51,6 @@
         mode: 0744
 
     - name: Run starship installation script
-      become: false
       shell: "/home/{{ username }}/install.sh -y"
       args:
         creates: /usr/local/bin/starship
