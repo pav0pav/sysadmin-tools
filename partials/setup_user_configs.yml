@@ -1,0 +1,85 @@
+- name: User Configurations, Scripts, and Miscellaneous Setups
+  hosts: all
+  become: false
+  tasks:
+    # --- Font Installation ---
+    - name: Make sure fonts directory exists.
+      file:
+        path: "{{ ansible_facts['user_dir'] }}/.local/share/fonts"
+        state: directory
+
+    - name: Download and install InconsolataGo font
+      unarchive:
+        src: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/InconsolataGo.zip
+        dest: "{{ ansible_facts['user_dir'] }}/.local/share/fonts"
+        owner: "{{ ansible_facts['user_id'] }}"
+        group: "{{ ansible_facts['user_id'] }}"
+        mode: 0644
+        remote_src: yes
+
+    # --- Joplin Installation ---
+    - name: Install Joplin
+      shell: "wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | bash"
+
+    # --- Nano Configuration ---
+    - name: Create yaml.nanorc marker
+      become: true
+      file:
+        path: "/usr/share/nano/yaml.nanorc"
+        state: touch
+
+    - name: Copy config from template - nano
+      become: true
+      template:
+        src: ../templates/yaml.nanorc.j2
+        dest: "/usr/share/nano/yaml.nanorc"
+        owner: root
+        group: root
+        mode: 0644
+
+    # --- Shell Enhancements ---
+    - name: Git branch name in bash
+      become: false
+      blockinfile:
+        path: "{{ ansible_facts['user_dir'] }}/.bashrc"
+        block: |
+          # Show current git branch in command line
+          parse_git_branch() {
+          git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+          }
+          export PS1="\[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
+        backup: yes
+
+    # --- Starship Setup ---
+    - name: Download and run starship installation script
+      shell: "curl -sS https://starship.rs/install.sh | sudo sh -s -- -y"
+
+    - name: Copy config from template - starship
+      template:
+        src: ../templates/starship.toml
+        dest: "{{ ansible_facts['user_dir'] }}/.config/starship.toml"
+        owner: "{{ ansible_facts['user_id'] }}"
+        group: "{{ ansible_facts['user_id'] }}"
+        mode: 0664
+
+    - name: Start starship automatically in your terminal
+      lineinfile:
+        path: "{{ ansible_facts['user_dir'] }}/.bashrc"
+        insertafter: EOF
+        line: 'eval "$(starship init bash)"'
+
+    # --- Zed Installation ---
+    - name: Install Zed editor
+      shell: "curl -f https://zed.dev/install.sh | sh"
+      args:
+        creates: "{{ ansible_facts['user_dir'] }}/.local/bin/zed"
+
+    - name: Ensure Zed config directory exists
+      file:
+        path: "{{ ansible_facts['user_dir'] }}/.config/zed"
+        state: directory
+
+    - name: Copy zed settings file
+      template:
+        src: ../templates/settings.json
+        dest: "{{ ansible_facts['user_dir'] }}/.config/zed/settings.json"

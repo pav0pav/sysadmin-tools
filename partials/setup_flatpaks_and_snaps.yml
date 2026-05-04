@@ -1,0 +1,15 @@
+- name: Flatpak Management
+  hosts: all
+  become: true
+  tasks:
+    - name: Add flathub remote repository
+      flatpak_remote:
+        name: flathub
+        state: present
+        flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+        method: system
+
+    - name: Install gradia snap package
+      snap:
+        name: gradia
+        state: present
