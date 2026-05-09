@@ -42,22 +42,23 @@
 
     - name: Install favourite tools
       apt:
-        pkg:
-          - alacritty
-          - brave-browser
-          - btop
-          - curl
-          - flatpak
-          - git
-          - iftop
-          - iperf3
-          - libfuse2
-          - micro
-          - mtr-tiny
-          - ncdu
-          - neofetch
-          - net-tools
-          - netdiscover
-          - tmux
-          - unzip
-        state: present
+         pkg:
+           - alacritty
+           - brave-browser
+           - btop
+           - curl
+           - flatpak
+           - git
+           - gnome-tweaks
+           - iftop
+           - iperf3
+           - libfuse2
+           - micro
+           - mtr-tiny
+           - ncdu
+           - neofetch
+           - net-tools
+           - netdiscover
+           - tmux
+           - unzip
+         state: present

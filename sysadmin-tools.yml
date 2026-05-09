@@ -9,3 +9,6 @@
 
 - name: Execute User Config Playbook
   import_playbook: partials/setup_user_configs.yml
+
+- name: Execute Docker Setup Playbook
+  import_playbook: partials/setup_docker.yml

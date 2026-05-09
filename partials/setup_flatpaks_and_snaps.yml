@@ -9,7 +9,9 @@
         flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
         method: system
 
-    - name: Install gradia snap package
+    - name: Install snap packages
       snap:
-        name: gradia
-        state: present
+         name:
+           - gradia
+           - chromium
+         state: present
