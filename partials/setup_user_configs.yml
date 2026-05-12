@@ -68,6 +68,52 @@
         insertafter: EOF
         line: 'eval "$(starship init bash)"'
 
+    # --- Alacritty ---
+    - name: Ensure Alacritty config directory exists
+      file:
+        path: "{{ ansible_facts['user_dir'] }}/.config/alacritty"
+        state: directory
+
+    - name: Clone alacritty-theme repository
+      git:
+        repo: https://github.com/alacritty/alacritty-theme.git
+        dest: "{{ ansible_facts['user_dir'] }}/.config/alacritty/themes"
+        update: false
+
+    - name: Copy config from template - alacritty
+      template:
+        src: ../templates/alacritty.toml.j2
+        dest: "{{ ansible_facts['user_dir'] }}/.config/alacritty/alacritty.toml"
+        owner: "{{ ansible_facts['user_id'] }}"
+        group: "{{ ansible_facts['user_id'] }}"
+        mode: '0664'
+
+    # --- Tmux (tmux.conf uses ~/.tmux/plugins/tpm)
+    - name: Ensure tmux plugin directory exists
+      file:
+        path: "{{ ansible_facts['user_dir'] }}/.tmux/plugins"
+        state: directory
+
+    - name: Install Tmux Plugin Manager (TPM)
+      git:
+        repo: https://github.com/tmux-plugins/tpm.git
+        dest: "{{ ansible_facts['user_dir'] }}/.tmux/plugins/tpm"
+        update: false
+
+    - name: Clone tmux-themepack (TPM expects ~/.tmux/plugins/tmux-themepack/)
+      git:
+        repo: https://github.com/jimeh/tmux-themepack.git
+        dest: "{{ ansible_facts['user_dir'] }}/.tmux/plugins/tmux-themepack"
+        update: false
+
+    - name: Copy config from template - tmux
+      template:
+        src: ../templates/tmux.conf.j2
+        dest: "{{ ansible_facts['user_dir'] }}/.tmux.conf"
+        owner: "{{ ansible_facts['user_id'] }}"
+        group: "{{ ansible_facts['user_id'] }}"
+        mode: '0664'
+
     # --- Zed Installation ---
     - name: Install Zed editor
       shell: "curl -f https://zed.dev/install.sh | sh"
